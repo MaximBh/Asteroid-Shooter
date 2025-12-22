@@ -2,16 +2,14 @@
 
 ENG
 1. Project Overview
-1.1
 
-The project is a two-dimensional arcade game in the space shooter genre.
+1.1. The project is a two-dimensional arcade game in the space shooter genre.
 
-1.2
-
-The player controls a spaceship in open outer space and must destroy asteroids while avoiding collisions with them.
+1.2. The player controls a spaceship in open outer space and must destroy asteroids while avoiding collisions with them.
 
 2. Project Functionality
-2.1 Spaceship Control
+
+2.1. Spaceship Control
 
 Rotation of the spaceship to the left and right
 
@@ -32,6 +30,7 @@ Splitting of asteroids into smaller ones when hit
 Projectile movement in the direction of the shot
 
 Limited lifetime of projectiles
+
 
 3. Gameplay
 
