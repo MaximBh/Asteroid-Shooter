@@ -22,9 +22,29 @@ def slowdown_factor(pos, min_pos, max_pos, margin):
     return 1.0
 
 
-# Звездный фон (в процессе)
+# Звездный фон
 class Star:
-    pass
+    def __init__(self):
+        self.x = random.uniform(0, SCREEN_WIDTH)
+        self.y = random.uniform(0, SCREEN_HEIGHT)
+        self.speed_factor = random.uniform(0.2, 0.6)
+
+    def move(self, dx, dy):
+        self.x -= dx * self.speed_factor
+        self.y -= dy * self.speed_factor
+
+        if self.x < 0:
+            self.x += SCREEN_WIDTH
+        elif self.x > SCREEN_WIDTH:
+            self.x -= SCREEN_WIDTH
+
+        if self.y < 0:
+            self.y += SCREEN_HEIGHT
+        elif self.y > SCREEN_HEIGHT:
+            self.y -= SCREEN_HEIGHT
+
+    def draw(self):
+        arcade.draw_circle_filled(self.x, self.y, 1.5, arcade.color.WHITE)
 
 
 class GameView(arcade.View):
@@ -78,9 +98,23 @@ class GameView(arcade.View):
                     )
                     break
 
-    # Движение мира (в процессе)
+    # Движение мира
     def move_world(self, dx, dy):
-        pass
+        for obj in self.asteroids:
+            obj.center_x -= dx
+            obj.center_y -= dy
+
+        for bullet in self.bullets:
+            bullet.center_x -= dx
+            bullet.center_y -= dy
+
+        for explosion in self.explosions:
+            explosion.center_x -= dx
+            explosion.center_y -= dy
+
+        for star in self.stars:
+            star.move(dx, dy)
+            
 
     def on_update(self, delta_time):
         self.ship.update(delta_time)
@@ -112,8 +146,19 @@ class GameView(arcade.View):
         self.bullets.update(delta_time)
         self.explosions.update(delta_time)
 
-        # Обработка попаданий (в процессе)
+        # Обработка попаданий
+        for bullet in self.bullets:
+            hits = arcade.check_for_collision_with_list(bullet, self.asteroids)
+            for asteroid in hits:
+                explosion.play()
+                self.score += 10
 
+                self.explosions.append(
+                    Explosion(asteroid.center_x, asteroid.center_y)
+                )
+
+                asteroid.remove_from_sprite_lists()
+                bullet.remove_from_sprite_lists()
 
         # Столкновение с кораблём
         if arcade.check_for_collision_with_list(self.ship, self.asteroids):
@@ -181,3 +226,4 @@ class GameView(arcade.View):
             self.ship.thrust = False
         if key in (arcade.key.UP, arcade.key.DOWN):
             self.ship.thrust_dir = 0
+
