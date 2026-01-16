@@ -62,6 +62,9 @@ class GameView(arcade.View):
         self.bullets = arcade.SpriteList()
         self.explosions = arcade.SpriteList()
 
+        # Фон
+        self.stars = [Star() for _ in range(140)]
+
         # Игровые данные
         self.level_manager = LevelManager()
         self.score = 0
@@ -114,7 +117,6 @@ class GameView(arcade.View):
 
         for star in self.stars:
             star.move(dx, dy)
-            
 
     def on_update(self, delta_time):
         self.ship.update(delta_time)
@@ -141,6 +143,9 @@ class GameView(arcade.View):
             # движение корабля
             self.ship.center_x += dx * fx
             self.ship.center_y += dy * fy
+
+            # движение мира
+            self.move_world(dx * (1 - fx), dy * (1 - fy))
 
         self.asteroids.update(delta_time)
         self.bullets.update(delta_time)
@@ -175,12 +180,14 @@ class GameView(arcade.View):
             self.level_manager.next_level()
             self.spawn_asteroids()
 
-
     def on_draw(self):
         self.clear()
 
         self.camera.use()
 
+        # рисуем мир
+        for star in self.stars:
+            star.draw()
 
         self.ship_list.draw()
         self.asteroids.draw()
@@ -226,4 +233,3 @@ class GameView(arcade.View):
             self.ship.thrust = False
         if key in (arcade.key.UP, arcade.key.DOWN):
             self.ship.thrust_dir = 0
-
